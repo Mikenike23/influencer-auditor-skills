@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.1 — 2026-06-23
+
+### Added
+- **Free mode — live channel verification (no API keys).** New `shared/LIVE-VERIFICATION.md`: how to vet a channel with just a browser (e.g. Claude in Chrome) via Social Blade — YouTube / TikTok / Instagram — reading account age, 30-day follower delta, per-post engagement, and growth-curve shape. Zero API cost, and doubles as a sanity-check on the scripted scores.
+- **X/Twitter live-profile fallback.** Social Blade discontinued Twitter; the free path now reads the live `x.com` profile directly for follower count + recent engagement.
+- **Paid audience-quality escalation guide.** When you need a true % of fake followers (especially IG/TikTok, where follower sampling is skipped), escalate to HypeAuditor / Modash / IQFluence — with honest pricing/API notes (no cheap API; no off-the-shelf MCP connector as of 2026-06).
+- A **Free mode** callout in all four SKILL.md files.
+
+### Changed
+- Sharpened the core caveat across the skills: **a real *person* is not a real *channel*.** Dormant or declining channels (flat/negative 30-day growth, near-zero recent engagement) and "audiences" that turn out to be near-empty handles are fails even when identity checks out. If you can only eyeball the numbers, return ⚠️ Mixed (unverified), never a pass.
+- Scoring engine (`shared/scoring.py`) unchanged — this release is methodology + docs only.
+
 ## v2.0 — 2026-06-15
 
 ### Added
