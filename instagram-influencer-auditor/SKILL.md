@@ -13,6 +13,17 @@ Scoring is **deterministic** — it lives in `scripts/scoring.py`, the shared en
 
 ---
 
+## Free mode — live cross-check (no API key)
+
+No Apify budget, or want to sanity-check the script's score? Verify the **live profile** in a browser (e.g. Claude in Chrome) via Social Blade:
+
+- **URL:** `https://socialblade.com/instagram/user/<handle>`. Decline the cookie banner.
+- **Read:** **30-day follower delta — watch for net loss** (a declining account is a real-but-fading audience), posting cadence (media count over time), and the Social Blade grade. Detailed average likes/comments need an SB login, so cross-check engagement on the live `instagram.com/<handle>` profile if you can.
+
+A real **person** with a **declining or low-engagement** account — or a claimed "audience" that's actually a near-empty handle — is a fail even when identity checks out. If you can only eyeball it, return **⚠️ Mixed (unverified)**, not a pass. Full method + paid audience-quality escalation: [`../shared/LIVE-VERIFICATION.md`](../shared/LIVE-VERIFICATION.md).
+
+---
+
 ## Step 0: Parse the input
 
 - `instagram.com/handle` URL or a bare handle → profile audit (default)
@@ -24,7 +35,7 @@ Instagram data comes via Apify, which costs real money per run. Before running, 
 
 > "Ready to run the Instagram scrape via Apify — this costs roughly $0.20–0.60. Go ahead?"
 
-Only proceed after they confirm.
+Only proceed after they confirm. (No budget? Use **Free mode** above.)
 
 ## Step 1: Get the Apify API token
 
@@ -95,7 +106,7 @@ Verdict + score inline, the 2–3 biggest flags, one recommendation sentence, an
 
 ## Known limitation — follower sampling
 
-Instagram follower lists aren't cheaply sampleable, so the **audience-quality** signal (bot followers) is skipped and surfaced as a caveat. IG detection therefore leans on engagement rate (vs follower count), comment quality, the like-to-comment ratio, and spikes. A pod/bot-inflated account typically shows a low ER against its follower count and a skewed like:comment ratio — both caught here.
+Instagram follower lists aren't cheaply sampleable, so the **audience-quality** signal (bot followers) is skipped and surfaced as a caveat. IG detection therefore leans on engagement rate (vs follower count), comment quality, the like-to-comment ratio, and spikes. A pod/bot-inflated account typically shows a low ER against its follower count and a skewed like:comment ratio — both caught here. For a true % of fake followers, escalate to a paid tool — see [`../shared/LIVE-VERIFICATION.md`](../shared/LIVE-VERIFICATION.md).
 
 ## Error handling
 

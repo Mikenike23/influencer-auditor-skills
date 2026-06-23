@@ -9,6 +9,14 @@ Four Claude / Cowork skills for vetting influencers and KOLs before partnerships
 | 🎵 TikTok | `tiktok-influencer-auditor` | Apify | ~$0.20–0.60 / run |
 | 📸 Instagram | `instagram-influencer-auditor` | Apify | ~$0.20–0.60 / run |
 
+> **No keys, no budget?** There's also a **free, no-API mode**: verify the live channel in a browser via Social Blade. See [Free mode](#free-mode--no-api-keys-live-cross-check) below.
+
+## What's new in v2.1
+
+- **Free mode — live channel verification (no API keys).** A browser-based cross-check via Social Blade (YouTube/TikTok/Instagram) and the live profile for X. Reads account age, 30-day follower delta, per-post engagement, and growth-curve shape. Full method: [`shared/LIVE-VERIFICATION.md`](shared/LIVE-VERIFICATION.md).
+- **Core caveat, sharpened: a real *person* is not a real *channel*.** Dormant/declining channels (flat or negative 30-day growth, near-zero recent engagement) and "audiences" that turn out to be near-empty handles are fails even when identity checks out.
+- **Paid audience-quality escalation guide** — HypeAuditor / Modash / IQFluence for a true % of fake followers, with honest pricing/API notes (no cheap API; no off-the-shelf MCP connector as of 2026-06).
+
 ## What's new in v2
 
 - **Deterministic scoring engine** (`shared/scoring.py`) — the score is now computed in code, not interpreted by hand. The same account returns the same number every time, so results are reproducible and comparable across a whole roster. A copy ships inside each skill so every skill is self-contained.
@@ -33,12 +41,26 @@ Each skill does the same three things:
 
 The engine is platform-aware: engagement-rate benchmarks and signal weights differ per platform (e.g. TikTok ER runs much higher than Instagram; YouTube has no public follower list, so that weight is reallocated to comment quality and spikes).
 
+## Free mode — no API keys (live cross-check)
+
+The scripts above are the rigorous path, but you don't always have keys or budget — and even when you do, it's worth sanity-checking the score against the channel's **live growth curve**. Plain HTTP fetches are blocked by Cloudflare/JS, so render the page in a browser (e.g. **Claude in Chrome**):
+
+- **YouTube / TikTok / Instagram** → Social Blade: `socialblade.com/<platform>/user|handle/<name>`. Read account age, **30-day follower delta** (overnight jumps = bought), per-post engagement vs follower count, growth-curve shape, and the SB grade.
+- **X / Twitter** → Social Blade discontinued Twitter, so open the **live profile** `x.com/<handle>` and read followers + recent-post engagement directly.
+
+**The lesson behind this mode: a real *person* is not a real *channel*.** Catch real-but-dormant/declining accounts and "audiences" that are actually near-empty handles. If you can only eyeball the numbers, return ⚠️ Mixed (unverified), not a pass. Full method → [`shared/LIVE-VERIFICATION.md`](shared/LIVE-VERIFICATION.md).
+
+## Escalating to a paid audience-quality tool
+
+Social Blade shows **growth and engagement**, not the **% of fake followers**. For that — especially on Instagram/TikTok, where the scripts skip follower sampling — use a dedicated tool before committing budget: **HypeAuditor** (best fake-follower detection, also covers X), **Modash** (clean data; 14-day free trial), or **IQFluence/insightIQ** (cheapest; free fake-follower check). None has a cheap API or an MCP connector as of 2026-06, so use their free trials/checks by hand on finalists. Details in [`shared/LIVE-VERIFICATION.md`](shared/LIVE-VERIFICATION.md).
+
 ## Setup
 
 1. **Install a skill** — drop its folder into your Claude/Cowork skills directory (`~/.claude/skills/`), or install the packaged `.skill` bundle from the Releases section.
 2. **Add your API keys** — copy `.env.example` to `.env` and fill in what you need:
    - `YOUTUBE_API_KEY` — free from [Google Cloud Console](https://console.cloud.google.com) (enable *YouTube Data API v3*). Needed for YouTube only.
    - `APIFY_API_TOKEN` — from [apify.com](https://apify.com) → Settings → API & Integrations. Needed for X, TikTok, and Instagram. New accounts get $5 free credit.
+   - *(No keys at all? Use [Free mode](#free-mode--no-api-keys-live-cross-check).)*
 3. **Run** — in Claude/Cowork, just say "audit this TikTok / YouTuber / X account / Instagram" and paste the profile URL. Or run a script directly:
 
 ```bash
@@ -62,7 +84,8 @@ influencer-auditor-skills/
 ├── CHANGELOG.md
 ├── .env.example
 ├── shared/
-│   └── scoring.py                  # canonical deterministic scoring engine (source of truth)
+│   ├── scoring.py                  # canonical deterministic scoring engine (source of truth)
+│   └── LIVE-VERIFICATION.md        # free, no-API browser method + paid-tool escalation
 ├── twitter-influencer-auditor/
 │   ├── SKILL.md
 │   └── scripts/{account_auditor.py, scoring.py}
@@ -81,8 +104,10 @@ influencer-auditor-skills/
 
 ## Limitations & honest caveats
 
+- **A real person is not a real channel.** Identity verification (the human exists, listings repeat their numbers) is not enough — always check the live channel's growth and engagement (see [Free mode](#free-mode--no-api-keys-live-cross-check)). Dormant/declining channels pass an identity check but fail an audience check.
 - **Apify actor IDs** can change or vary by account. Each script lets you override the actor via env vars (see each SKILL.md). Defaults point at widely-used public actors.
-- **TikTok & Instagram follower sampling** isn't cheap, so the audience-quality signal is skipped there and surfaced as a caveat. Those audits lean on engagement rate, comment quality, ratios, and spikes — which catch most paid-engagement inflation.
+- **TikTok & Instagram follower sampling** isn't cheap, so the audience-quality signal is skipped there and surfaced as a caveat. Those audits lean on engagement rate, comment quality, ratios, and spikes — which catch most paid-engagement inflation. For a true % of fake followers, escalate to a paid tool (see above).
+- **No off-the-shelf MCP connector** exists for the paid audience-quality tools (checked the MCP registry, 2026-06), and none offers a cheap API — so the practical stack is scripted audit + free Social Blade cross-check, with paid tools used by hand on finalists.
 - **A high score means "no inflation detected in the signals we could see,"** not a guarantee of authenticity. Always read the caveats. This is a screening tool, not a forensic audit.
 - **Benchmarks are conservative industry ranges** (2024–25). Treat scores as a comparative screen across candidates, not an absolute truth.
 

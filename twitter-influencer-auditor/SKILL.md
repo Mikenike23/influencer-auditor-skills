@@ -13,6 +13,18 @@ Scoring is **deterministic** — it lives in `scripts/scoring.py`, the shared en
 
 ---
 
+## Free mode — live cross-check (no API key)
+
+No Apify budget, or want to sanity-check the script's score? **Social Blade discontinued Twitter/X**, so open the **live profile** in a browser (e.g. Claude in Chrome):
+
+- **URL:** `https://x.com/<handle>`. Decline the cookie banner.
+- **Read:** follower / following counts, total post count, join date, and engagement on the most recent posts (likes/replies/reposts vs follower count).
+- **Watch for:** a near-empty account (a few followers, no posts) pitching paid deals; no recent posting; a follower/following imbalance; an account name that doesn't match the claimed creator.
+
+The only social on file being a tiny or dormant handle is a fail even when the person is real. If you can only eyeball it, return **⚠️ Mixed (unverified)**, not a pass. Full method + paid audience-quality escalation (HypeAuditor covers X): [`../shared/LIVE-VERIFICATION.md`](../shared/LIVE-VERIFICATION.md).
+
+---
+
 ## Step 0: Parse the input
 
 - `x.com/@handle` or `twitter.com/@handle` URL → account audit (default)
@@ -25,7 +37,7 @@ Apify (the scraping backend) costs real money per run. Before running, tell the 
 
 > "Ready to run the X scrape via Apify — this costs roughly $0.20–0.50. Go ahead?"
 
-Only proceed after they confirm.
+Only proceed after they confirm. (No budget? Use **Free mode** above.)
 
 ## Step 1: Get the Apify API token
 

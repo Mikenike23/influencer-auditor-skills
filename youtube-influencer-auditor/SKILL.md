@@ -13,6 +13,17 @@ Scoring is **deterministic** — it lives in `scripts/scoring.py`, the shared en
 
 ---
 
+## Free mode — live cross-check (no API key)
+
+No key/budget, or want to sanity-check the script's score? Verify the **live channel** in a browser (e.g. Claude in Chrome) via Social Blade and read it by eye:
+
+- **URL:** `https://socialblade.com/youtube/handle/<handle>` (or `/channel/<UC...>`). Decline the cookie banner.
+- **Read:** created date / channel age, **30-day subscriber + view deltas**, per-video views vs subscriber count, and the growth-curve shape (smooth = organic; vertical jump = bought; spike-then-collapse = burst-buying), plus the Social Blade grade.
+
+A real **person** with a **dormant or declining** channel — or a claimed "audience" that's actually a near-empty handle — is a fail even when identity checks out. If you can only eyeball it, return **⚠️ Mixed (unverified)**, not a pass. Full method + paid audience-quality escalation (HypeAuditor / Modash / IQFluence): [`../shared/LIVE-VERIFICATION.md`](../shared/LIVE-VERIFICATION.md).
+
+---
+
 ## Step 0: Parse the input
 
 - `youtube.com/@handle` or `youtube.com/channel/UC...` → channel audit (default)
