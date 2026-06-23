@@ -13,6 +13,17 @@ Scoring is **deterministic** — it lives in `scripts/scoring.py`, the shared en
 
 ---
 
+## Free mode — live cross-check (no API key)
+
+No Apify budget, or want to sanity-check the script's score? Verify the **live profile** in a browser (e.g. Claude in Chrome) via Social Blade:
+
+- **URL:** `https://socialblade.com/tiktok/user/<handle>`. Decline the cookie banner.
+- **Read:** created date / account age, **30-day follower + likes deltas**, likes-per-video vs follower count, the **following-to-follower ratio** (huge following = follow-for-follow farming), the growth-curve shape (smooth = organic; spike-then-collapse = burst-buying), and the Social Blade grade.
+
+A real **person** with a **dormant** channel (flat 30-day growth, ~88 likes on videos with thousands of followers) is a fail even when identity checks out. If you can only eyeball it, return **⚠️ Mixed (unverified)**, not a pass. Full method + paid audience-quality escalation: [`../shared/LIVE-VERIFICATION.md`](../shared/LIVE-VERIFICATION.md).
+
+---
+
 ## Step 0: Parse the input
 
 - `tiktok.com/@handle` URL or a bare handle → profile audit (default)
@@ -24,7 +35,7 @@ TikTok data comes via Apify, which costs real money per run. Before running, tel
 
 > "Ready to run the TikTok scrape via Apify — this costs roughly $0.20–0.60. Go ahead?"
 
-Only proceed after they confirm.
+Only proceed after they confirm. (No budget? Use **Free mode** above.)
 
 ## Step 1: Get the Apify API token
 
@@ -95,7 +106,7 @@ Verdict + score inline, the 2–3 biggest flags, one recommendation sentence, an
 
 ## Known limitation — follower sampling
 
-TikTok follower lists aren't cheaply sampleable, so the **audience-quality** signal (bot followers) is skipped and surfaced as a caveat. TikTok detection therefore leans on engagement rate, comment quality, ratios, and spikes — strong signals on TikTok, where bought views usually crater the ER. If you have an actor that can sample followers, the engine will use it; otherwise treat a clean score as "no inflation detected in the signals we could see," not a guarantee.
+TikTok follower lists aren't cheaply sampleable, so the **audience-quality** signal (bot followers) is skipped and surfaced as a caveat. TikTok detection therefore leans on engagement rate, comment quality, ratios, and spikes — strong signals on TikTok, where bought views usually crater the ER. If you have an actor that can sample followers, the engine will use it; otherwise treat a clean score as "no inflation detected in the signals we could see," not a guarantee. For a true % of fake followers, escalate to a paid tool — see [`../shared/LIVE-VERIFICATION.md`](../shared/LIVE-VERIFICATION.md).
 
 ## Error handling
 
